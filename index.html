@@ -23,8 +23,6 @@
   .btn{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
     background:var(--acid);color:#0b0c0e;padding:13px 22px;border-radius:11px;border:1px solid var(--acid);transition:transform .15s,box-shadow .25s;white-space:nowrap}
   .btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(200,247,80,.26)}
-  /* Gumroad's overlay script restyles .gumroad-button — keep our look */
-  a.btn.gumroad-button{background:var(--acid)!important;color:#0b0c0e!important;border:1px solid var(--acid)!important;border-radius:11px!important;font-family:"JetBrains Mono",monospace!important}
   .dot{width:8px;height:8px;border-radius:50%;background:var(--acid);box-shadow:0 0 9px rgba(200,247,80,.7);flex:0 0 auto}
 
   /* nav */
@@ -48,6 +46,10 @@
   .sub{color:var(--dim);font-size:19px;max-width:32ch;margin:24px 0 30px}
   .cta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .price-line{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--faint)}
+  .hero-price{display:flex;align-items:baseline;gap:14px;margin:2px 0 20px}
+  .hero-price .hp{font-family:"Bricolage Grotesque";font-weight:800;font-size:58px;line-height:1;letter-spacing:-.03em;color:var(--ink)}
+  .hero-price .hp sup{font-size:25px;vertical-align:super;color:var(--acid);margin-right:1px}
+  .hero-price .hp-note{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint);line-height:1.5}
   .hf{margin-top:26px;display:flex;gap:20px;flex-wrap:wrap;color:var(--faint);font-size:12.5px;font-family:"JetBrains Mono",monospace}
   .hf span{display:flex;align-items:center;gap:7px}.hf b{color:var(--acid)}
 
@@ -153,7 +155,7 @@
     <a href="#features">Features</a>
     <a href="#compare">Compare</a>
     <a href="#install">Install</a>
-    <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn gumroad-button">Get it — $15</a>
+    <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn">Get it</a>
   </div>
 </div></nav>
 
@@ -162,9 +164,9 @@
     <div class="kicker"><span class="dot"></span> For Adobe Premiere Pro</div>
     <h1>Your folder,<br>live in your <em>bins.</em></h1>
     <p class="sub">Drop a file in a folder and it's in Premiere — on its own. New files import, sequences arrive as one clip, deleted files go offline.</p>
+    <div class="hero-price"><span class="hp"><sup>$</sup>15</span><span class="hp-note">one-time<br>no subscription</span></div>
     <div class="cta-row">
-      <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn gumroad-button">Get Folder Watch — $15</a>
-      <span class="price-line">one-time · no subscription</span>
+      <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn">Get Folder Watch</a>
     </div>
     <div class="hf">
       <span><b>✦</b> Windows · Premiere 2020+</span>
@@ -270,7 +272,7 @@
       <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> Every feature — no tiers, no add-ons</div>
       <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> Free updates</div>
     </div>
-    <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn gumroad-button">Buy Folder Watch — $15</a>
+    <a href="https://saltercreektools.gumroad.com/l/bpbvcu" class="btn">Buy Folder Watch</a>
     <div class="terms">Windows · Premiere Pro 2020+ · instant download · refundable</div>
   </div>
 </div></section>
@@ -312,7 +314,5 @@
   </div>
   <div class="mono">© 2026 Salter Creek PTE. LTD.</div>
 </div></footer>
-
-<script src="https://gumroad.com/js/gumroad.js"></script>
 </body>
 </html>
