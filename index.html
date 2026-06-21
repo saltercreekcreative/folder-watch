@@ -112,8 +112,8 @@
   .pricing{text-align:center}
   .pcard{background:linear-gradient(180deg,var(--panel),#0c0f12);border:1px solid var(--line);border-radius:20px;padding:46px 40px;max-width:440px;margin:42px auto 0;position:relative;overflow:hidden}
   .pcard::before{content:"";position:absolute;inset:-1px;border-radius:20px;padding:1px;background:linear-gradient(180deg,rgba(200,247,80,.35),transparent 42%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-  .price{font-family:"Bricolage Grotesque";font-weight:800;font-size:84px;line-height:1;letter-spacing:-.04em}
-  .price sup{font-size:34px;vertical-align:super;color:var(--acid)}
+  .bigprice{font-family:"Bricolage Grotesque";font-weight:800;font-size:84px;line-height:1;letter-spacing:-.04em}
+  .bigprice sup{font-size:34px;vertical-align:super;color:var(--acid)}
   .once{color:var(--dim);font-size:15px;margin:8px 0 26px}
   .plist{text-align:left;max-width:280px;margin:0 auto 28px;display:flex;flex-direction:column;gap:10px}
   .plist div{display:flex;gap:10px;font-size:15px}
@@ -257,7 +257,7 @@
   <h2>One price. No subscription.</h2>
   <div class="pcard">
     <!-- PRICE: change "15" (and the $15 in the nav/compare) to adjust -->
-    <div class="price"><sup>$</sup>15</div>
+    <div class="bigprice"><sup>$</sup>15</div>
     <div class="once">Pay once. Yours forever.</div>
     <div class="plist">
       <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> The plugin + one-click installer</div>
