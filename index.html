@@ -4,28 +4,29 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Folder Watch — auto-import for Adobe Premiere Pro</title>
-<meta name="description" content="Watch a folder and it appears in your Premiere bins, live. Drop a file in — it imports on its own." />
+<meta name="description" content="Watch a folder and it appears in your Premiere bins, live. New files import on their own, sequences come in as one clip, deleted files go offline." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Archivo:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Archivo:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b0c0e; --panel:#131619; --panel2:#181c21; --line:#23272d;
     --ink:#edeff1; --dim:#888e96; --faint:#565c64;
-    --acid:#c8f750; --sig:#7fc9ff;
+    --acid:#c8f750; --sig:#7fc9ff; --red:#ff6a6a;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--ink);font-family:"Archivo",sans-serif;font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 28px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
   a{color:inherit;text-decoration:none}
   .mono{font-family:"JetBrains Mono",monospace}
-  .btn{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:15px;
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
     background:var(--acid);color:#0b0c0e;padding:13px 22px;border-radius:11px;border:1px solid var(--acid);transition:transform .15s,box-shadow .25s;white-space:nowrap}
   .btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(200,247,80,.26)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--acid);box-shadow:0 0 9px rgba(200,247,80,.7);flex:0 0 auto}
 
   /* nav */
-  nav{position:sticky;top:0;z-index:10;background:rgba(11,12,14,.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav{position:sticky;top:0;z-index:10;background:rgba(11,12,14,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
   .brand{display:flex;align-items:center;gap:11px;font-family:"Bricolage Grotesque";font-weight:800;font-size:18px}
   .eye{width:20px;height:20px;border-radius:50%;border:2px solid var(--acid);display:grid;place-items:center;box-shadow:0 0 12px rgba(200,247,80,.45)}
@@ -36,63 +37,84 @@
   .nav .btn{padding:9px 16px;font-size:13px}
 
   /* hero */
-  header{padding:80px 0 90px;position:relative;overflow:hidden}
-  header::before{content:"";position:absolute;top:-180px;right:-80px;width:620px;height:520px;background:radial-gradient(closest-side,rgba(200,247,80,.10),transparent);pointer-events:none}
-  .hero{display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center;position:relative}
-  .kicker{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--acid);margin-bottom:26px}
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--acid);animation:pulse 1.9s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(200,247,80,.5)}70%{box-shadow:0 0 0 8px rgba(200,247,80,0)}100%{box-shadow:0 0 0 0 rgba(200,247,80,0)}}
-  h1{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(40px,6vw,68px);line-height:1.0;letter-spacing:-.03em}
+  header{padding:78px 0 86px;position:relative;overflow:hidden}
+  header::before{content:"";position:absolute;top:-180px;right:-90px;width:640px;height:520px;background:radial-gradient(closest-side,rgba(200,247,80,.10),transparent);pointer-events:none}
+  .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center;position:relative}
+  .kicker{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--acid);border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:999px;margin-bottom:26px}
+  h1{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(40px,6vw,70px);line-height:.99;letter-spacing:-.03em}
   h1 em{font-style:normal;color:var(--acid)}
-  .sub{color:var(--dim);font-size:19px;max-width:32ch;margin:24px 0 32px}
+  .sub{color:var(--dim);font-size:19px;max-width:32ch;margin:24px 0 30px}
   .cta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .price-line{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--faint)}
+  .hf{margin-top:26px;display:flex;gap:20px;flex-wrap:wrap;color:var(--faint);font-size:12.5px;font-family:"JetBrains Mono",monospace}
+  .hf span{display:flex;align-items:center;gap:7px}.hf b{color:var(--acid)}
 
-  /* panel mock */
+  /* hero panel (static) */
   .panel{background:linear-gradient(180deg,var(--panel),#0c0f12);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 26px 70px rgba(0,0,0,.5)}
   .panel-bar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
   .dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:#2a2f37}
   .panel-name{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--dim);margin-left:6px}
   .panel-status{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--acid);display:flex;align-items:center;gap:6px}
-  .panel-body{padding:16px 16px 20px}
-  .row{display:flex;align-items:center;gap:9px;font-size:13.5px;padding:5px 0}
-  .row.bin{color:var(--dim)}.row.bin .tw{color:var(--acid);font-size:11px}
-  .row.sub{padding-left:18px}
-  .row.clip{padding-left:34px;color:var(--ink);opacity:0;animation:fin .5s forwards}
-  .row.clip .ic{width:15px;height:15px;color:var(--sig)}
-  .row.clip:nth-of-type(3){animation-delay:.35s}.row.clip:nth-of-type(4){animation-delay:.7s}.row.clip:nth-of-type(6){animation-delay:1.05s}
-  @keyframes fin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-  .flag{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--acid);letter-spacing:.06em}
+  .pcols{display:grid;grid-template-columns:1fr 1fr}
+  .pcol{padding:15px}.pcol.l{border-right:1px dashed var(--line)}
+  .pcol h5{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+  .frow{display:flex;align-items:center;gap:9px;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:8px 10px;font-size:12.5px;margin-bottom:8px}
+  .frow .ic{width:15px;height:15px;flex:0 0 auto;color:var(--sig)}
+  .frow.s .ic{color:var(--acid)}
+  .frow small{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--faint)}
+  .brow{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim);padding:3px 0}
+  .brow .tw{color:var(--acid);font-size:11px}
+  .brow.sub{padding-left:16px}
+  .brow.clip{padding-left:32px;color:var(--ink)}.brow.clip .ic{width:13px;height:13px;color:var(--sig)}
+  .brow .flag{margin-left:auto;font-family:"JetBrains Mono",monospace;font-size:8.5px;color:var(--acid)}
 
   .rule{height:1px;background:var(--line)}
-
-  /* sections */
-  section{padding:90px 0}
+  section{padding:88px 0}
   .eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--acid);margin-bottom:14px}
-  h2{font-family:"Bricolage Grotesque";font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;letter-spacing:-.02em}
+  h2{font-family:"Bricolage Grotesque";font-weight:700;font-size:clamp(28px,4vw,42px);line-height:1.04;letter-spacing:-.02em;max-width:18ch}
+  .lead{color:var(--dim);font-size:18px;max-width:36ch;margin-top:16px}
+
+  /* problem */
+  .problem{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+  .quote{font-family:"Bricolage Grotesque";font-weight:500;font-size:clamp(22px,2.6vw,30px);line-height:1.2;letter-spacing:-.01em}
+  .quote .x{color:var(--red)}.quote .y{color:var(--acid)}
+  .src{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);margin-top:16px}
 
   /* features */
-  .feat{display:grid;grid-template-columns:34px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--line)}
-  .feat:last-child{border-bottom:none}
-  .feat .n{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--acid);padding-top:4px}
-  .feat h3{font-family:"Bricolage Grotesque";font-weight:600;font-size:21px;letter-spacing:-.01em;margin-bottom:4px}
-  .feat p{color:var(--dim);font-size:16px;max-width:56ch}
-  .features h2{margin-bottom:26px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;transition:border-color .25s,background .25s}
+  .card:hover{border-color:#36404a;background:var(--panel2)}
+  .card .ico{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;background:rgba(200,247,80,.08);border:1px solid rgba(200,247,80,.2);color:var(--acid);margin-bottom:14px}
+  .card .ico svg{width:19px;height:19px}
+  .card h3{font-family:"Bricolage Grotesque";font-weight:700;font-size:18px;letter-spacing:-.01em;margin-bottom:6px}
+  .card p{color:var(--dim);font-size:14.5px}
 
   /* steps */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:42px}
   .step .s{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint);margin-bottom:12px}
-  .step h3{font-family:"Bricolage Grotesque";font-weight:600;font-size:19px;margin-bottom:6px}
+  .step h3{font-family:"Bricolage Grotesque";font-weight:700;font-size:19px;margin-bottom:6px}
   .step p{color:var(--dim);font-size:15px}
+
+  /* comparison */
+  .compare{margin-top:42px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .crow{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;align-items:center}
+  .crow>div{padding:15px 18px;border-bottom:1px solid var(--line);font-size:15px}
+  .crow.head>div{font-family:"JetBrains Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);background:var(--panel)}
+  .crow.head .me{color:var(--acid)}
+  .crow .feat{color:var(--ink)}
+  .crow .me{background:rgba(200,247,80,.05)}
+  .crow:last-child>div{border-bottom:none}
+  .yes{color:var(--acid);font-weight:700}.no{color:var(--faint)}
+  .crow.price>div{font-family:"JetBrains Mono",monospace;font-weight:700}
+  .crow.price .me{color:var(--acid);font-size:17px}
 
   /* pricing */
   .pricing{text-align:center}
-  .pcard{background:linear-gradient(180deg,var(--panel),#0c0f12);border:1px solid var(--line);border-radius:20px;padding:46px 40px;max-width:440px;margin:40px auto 0;position:relative;overflow:hidden}
+  .pcard{background:linear-gradient(180deg,var(--panel),#0c0f12);border:1px solid var(--line);border-radius:20px;padding:46px 40px;max-width:440px;margin:42px auto 0;position:relative;overflow:hidden}
   .pcard::before{content:"";position:absolute;inset:-1px;border-radius:20px;padding:1px;background:linear-gradient(180deg,rgba(200,247,80,.35),transparent 42%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
   .price{font-family:"Bricolage Grotesque";font-weight:800;font-size:84px;line-height:1;letter-spacing:-.04em}
   .price sup{font-size:34px;vertical-align:super;color:var(--acid)}
-  .once{color:var(--dim);font-size:15px;margin:8px 0 4px}
-  .anchor{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);margin-bottom:26px}
+  .once{color:var(--dim);font-size:15px;margin:8px 0 26px}
   .plist{text-align:left;max-width:280px;margin:0 auto 28px;display:flex;flex-direction:column;gap:10px}
   .plist div{display:flex;gap:10px;font-size:15px}
   .plist svg{width:17px;height:17px;color:var(--acid);flex:0 0 auto;margin-top:3px}
@@ -100,9 +122,9 @@
   .terms{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--faint);margin-top:16px}
 
   /* faq */
-  .faq{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+  .faq{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:42px}
   .q{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:22px}
-  .q h4{font-family:"Bricolage Grotesque";font-weight:600;font-size:17px;margin-bottom:7px}
+  .q h4{font-family:"Bricolage Grotesque";font-weight:700;font-size:17px;margin-bottom:7px}
   .q p{color:var(--dim);font-size:14.5px}
 
   footer{border-top:1px solid var(--line);padding:42px 0}
@@ -110,10 +132,11 @@
   .foot .mono{font-size:12px}
 
   @media(max-width:860px){
-    .hero{grid-template-columns:1fr;gap:44px}
-    .steps,.faq{grid-template-columns:1fr}
+    .hero,.problem{grid-template-columns:1fr;gap:42px}
+    .grid,.steps,.faq{grid-template-columns:1fr}
     .nav-r a:not(.btn){display:none}
-    .feat{grid-template-columns:1fr;gap:5px}
+    .crow{grid-template-columns:1.5fr 1fr 1fr}
+    .crow .hand{display:none}
   }
 </style>
 </head>
@@ -123,19 +146,24 @@
   <div class="brand"><span class="eye"></span> Folder&nbsp;Watch</div>
   <div class="nav-r">
     <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#get" class="btn">Get it</a>
+    <a href="#compare">Compare</a>
+    <a href="#get" class="btn">Get it — $15</a>
   </div>
 </div></nav>
 
 <header><div class="wrap hero">
   <div>
     <div class="kicker"><span class="dot"></span> For Adobe Premiere Pro</div>
-    <h1>Drop a file in.<br>It's in your <em>bins.</em></h1>
-    <p class="sub">Folder Watch keeps your Premiere project in sync with a folder on your disk — live, while you edit.</p>
+    <h1>Your folder,<br>live in your <em>bins.</em></h1>
+    <p class="sub">Drop a file in a folder and it's in Premiere — on its own. New files import, sequences arrive as one clip, deleted files go offline.</p>
     <div class="cta-row">
-      <a href="#get" class="btn">Get Folder Watch</a>
-      <span class="price-line">$15 · one-time · Windows</span>
+      <a href="#get" class="btn">Get Folder Watch — $15</a>
+      <span class="price-line">one-time · no subscription</span>
+    </div>
+    <div class="hf">
+      <span><b>✦</b> Windows · Premiere 2020+</span>
+      <span><b>✦</b> One-click installer</span>
+      <span><b>✦</b> Non-destructive</span>
     </div>
   </div>
   <div class="panel">
@@ -144,28 +172,58 @@
       <span class="panel-name">Folder Watch — episode_01</span>
       <span class="panel-status"><span class="dot"></span> Watching</span>
     </div>
-    <div class="panel-body">
-      <div class="row bin"><span class="tw">▾</span> episode_01</div>
-      <div class="row bin sub"><span class="tw">▾</span> shots</div>
-      <div class="row clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h6l2 3h6v13H5z"/></svg> A_CAM_0042.mov <span class="flag">IMPORTED</span></div>
-      <div class="row clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M7 9h6M7 13h6"/></svg> render_[####].exr <span class="flag">1 CLIP</span></div>
-      <div class="row bin sub"><span class="tw">▾</span> audio</div>
-      <div class="row clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg> scratch_vo.wav <span class="flag">IMPORTED</span></div>
+    <div class="pcols">
+      <div class="pcol l">
+        <h5>On disk · /shots</h5>
+        <div class="frow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h6l2 3h6v13H5z"/></svg> A_CAM_0042.mov <small>+NEW</small></div>
+        <div class="frow s"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M7 9h6M7 13h6"/></svg> render_[####].exr <small>120f</small></div>
+        <div class="frow"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg> scratch_vo.wav <small>+NEW</small></div>
+      </div>
+      <div class="pcol">
+        <h5>In Premiere · bins</h5>
+        <div class="brow"><span class="tw">▾</span> episode_01</div>
+        <div class="brow sub"><span class="tw">▾</span> shots</div>
+        <div class="brow clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h6l2 3h6v13H5z"/></svg> A_CAM_0042 <span class="flag">IMPORTED</span></div>
+        <div class="brow clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"/></svg> render seq <span class="flag">1 CLIP</span></div>
+        <div class="brow sub"><span class="tw">▾</span> audio</div>
+        <div class="brow clip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/></svg> scratch_vo <span class="flag">IMPORTED</span></div>
+      </div>
     </div>
   </div>
 </div></header>
 
 <div class="rule"></div>
 
-<section class="features" id="features"><div class="wrap">
-  <h2>Everything a manual import does — without you doing it.</h2>
-  <div class="feat"><div class="n">01</div><div><h3>Imports on its own</h3><p>New files land in your project automatically, in bins that mirror your folders. No switching windows to drag things in.</p></div></div>
-  <div class="feat"><div class="n">02</div><div><h3>Sequences as one clip</h3><p>Numbered image frames come in as a single image-sequence clip — not hundreds of stills.</p></div></div>
-  <div class="feat"><div class="n">03</div><div><h3>Watch only what matters</h3><p>Tick the subfolders you care about. The rest is ignored, and your folder names carry over as bins.</p></div></div>
-  <div class="feat"><div class="n">04</div><div><h3>Safe by design</h3><p>It never deletes a clip. Remove a file and it simply goes offline, so your timeline stays intact. It also won't duplicate media already in your project.</p></div></div>
+<section id="problem"><div class="wrap problem">
+  <div>
+    <div class="eyebrow">The problem</div>
+    <h2>Premiere has no watch folder. Adobe keeps saying no.</h2>
+    <p class="lead">So every time footage, a render, or a VO lands on disk, you stop editing, switch windows, find the file, drag it in, sort it into a bin. Folder Watch does it the instant the file appears.</p>
+  </div>
+  <div>
+    <p class="quote"><span class="x">"Premiere doesn't have any watch-folder setup."</span><br><br>So editors pay <span class="y">$20–$40</span> just to stop importing by hand. This does more, for less.</p>
+    <p class="src">// Adobe Community feature requests</p>
+  </div>
 </div></section>
 
-<section id="how" style="padding-top:0"><div class="wrap">
+<div class="rule"></div>
+
+<section id="features"><div class="wrap">
+  <div class="eyebrow">What it does</div>
+  <h2>A real ingest pipeline, in a panel.</h2>
+  <div class="grid">
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 3z"/></svg></div><h3>Imports on its own</h3><p>Drop in footage and it appears in your project — in bins that mirror your folder tree.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="14" height="14" rx="2"/><path d="M7 8h6M7 12h6"/><path d="M21 8v12H9"/></svg></div><h3>Sequences as one clip</h3><p>Numbered image frames (EXR, DPX, PNG…) come in as a single clip — not hundreds of stills.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h7l2 2h7"/><path d="M4 6v12h16V8"/><path d="m9 13 2 2 4-4"/></svg></div><h3>Watch only what matters</h3><p>Tick the subfolders you care about. The rest is ignored, and your folder names carry over as bins.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M4 4l16 16"/></svg></div><h3>Offline, never gone</h3><p>Delete a source file and its clip goes offline — your timeline cuts stay intact. Nothing is yanked.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="13" height="13" rx="2"/><path d="M8 21h11a2 2 0 0 0 2-2V8"/></svg></div><h3>No duplicates</h3><p>Point it at an existing project and it adopts the clips already there instead of importing copies.</p></div>
+    <div class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><h3>Resumes after a restart</h3><p>Reopen Premiere and it picks up the same folder, the same bins, watching — automatically.</p></div>
+  </div>
+</div></section>
+
+<div class="rule"></div>
+
+<section id="how"><div class="wrap">
   <div class="eyebrow">How it works</div>
   <h2>Set it once. Forget it's there.</h2>
   <div class="steps">
@@ -177,21 +235,37 @@
 
 <div class="rule"></div>
 
+<section id="compare"><div class="wrap">
+  <div class="eyebrow">The math</div>
+  <h2>More than the competition. A fraction of the price.</h2>
+  <div class="compare">
+    <div class="crow head"><div>Feature</div><div class="me">Folder Watch</div><div>Competition</div><div class="hand">By hand</div></div>
+    <div class="crow"><div class="feat">Auto-import on file drop</div><div class="me yes">✓</div><div class="yes">✓</div><div class="hand no">✕</div></div>
+    <div class="crow"><div class="feat">Truly instant (no timer)</div><div class="me yes">✓</div><div class="no">timer</div><div class="hand no">—</div></div>
+    <div class="crow"><div class="feat">Pick which subfolders</div><div class="me yes">✓</div><div class="no">~</div><div class="hand no">—</div></div>
+    <div class="crow"><div class="feat">Sequences → one clip</div><div class="me yes">✓</div><div class="yes">✓</div><div class="hand no">✕</div></div>
+    <div class="crow"><div class="feat">Offline on delete (safe)</div><div class="me yes">✓</div><div class="no">✕</div><div class="hand no">✕</div></div>
+    <div class="crow"><div class="feat">One-click junk cleanup</div><div class="me yes">✓</div><div class="no">✕</div><div class="hand no">✕</div></div>
+    <div class="crow price"><div class="feat">Price</div><div class="me">$15</div><div>$20–40</div><div class="hand no">your time</div></div>
+  </div>
+</div></section>
+
+<div class="rule"></div>
+
 <section class="pricing" id="get"><div class="wrap">
   <div class="eyebrow">Pricing</div>
   <h2>One price. No subscription.</h2>
   <div class="pcard">
-    <!-- PRICE: change "15" (and the $15 in the hero) to adjust -->
+    <!-- PRICE: change "15" (and the $15 in the nav/compare) to adjust -->
     <div class="price"><sup>$</sup>15</div>
     <div class="once">Pay once. Yours forever.</div>
-    <div class="anchor">competing tools cost $20–40</div>
     <div class="plist">
       <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> The plugin + one-click installer</div>
-      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> Every feature — no tiers</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> Every feature — no tiers, no add-ons</div>
       <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg> Free updates</div>
     </div>
     <!-- REPLACE href with your Gumroad / Lemon Squeezy link -->
-    <a href="https://saltercreek.gumroad.com/l/folderwatch" class="btn">Buy Folder Watch</a>
+    <a href="https://saltercreek.gumroad.com/l/folderwatch" class="btn">Buy Folder Watch — $15</a>
     <div class="terms">Windows · Premiere Pro 2020+ · instant download · refundable</div>
   </div>
 </div></section>
